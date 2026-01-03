@@ -1,15 +1,12 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 
-const log = (msg) => console.log(`[36m[FORGE-CLOUD][0m ${msg}`);
-
 async function runForge() {
-  log('🛠️ Starten van Native Transformatie...');
+  console.log('🛠️ Starten van Native Transformatie...');
 
   try {
-    // 1. Capacitor setup
     const capConfig = {
-      appId: "com.TransformationTracker.app",
+      appId: "com.forge.aiapp",
       appName: "TransformationTracker ",
       webDir: "www",
       bundledWebRuntime: false,
@@ -17,27 +14,21 @@ async function runForge() {
     };
     fs.writeFileSync('capacitor.config.json', JSON.stringify(capConfig, null, 2));
 
-    // 2. Platform toevoegen
     if (!fs.existsSync('android')) {
+      console.log('➕ Toevoegen van Android platform...');
       execSync('npx cap add android', { stdio: 'inherit' });
     }
 
-    // 3. Icoon verwerking
-    if (fs.existsSync('app-icon.png')) {
-      log('🎨 Icoon injecteren...');
-      // ... icoon kopieer logica ...
-    }
-
-    // 4. Sync & Build
+    console.log('🔄 Synchroniseren...');
     execSync('npx cap sync android', { stdio: 'inherit' });
     
-    log('🏗️ Gradle Build starten...');
+    console.log('🏗️ Gradle Build...');
     const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
     execSync(`cd android && ${gradlew} assembleDebug --no-daemon`, { stdio: 'inherit' });
 
-    log('🚀 APK succesvol gebouwd!');
+    console.log('🚀 APK succesvol gebouwd!');
   } catch (e) {
-    console.error(e);
+    console.error('❌ Build faal:', e.message);
     process.exit(1);
   }
 }
