@@ -6,7 +6,7 @@ async function runForge() {
 
   try {
     const capConfig = {
-      appId: "com.forge.aiapp",
+      appId: "com.Casper.TransformationTracker.app",
       appName: "TransformationTracker ",
       webDir: "www",
       bundledWebRuntime: false,
