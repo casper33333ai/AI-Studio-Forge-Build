@@ -28,16 +28,12 @@ async function scrapeAIStudio() {
     console.log('⏳ [WAIT] Pagina laden...');
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
     
-    // Wacht op AI Studio specifieke geladen status
     console.log('⏳ [WAIT] Wachten op JavaScript execution...');
     await new Promise(r => setTimeout(r, 15000));
 
     const result = await page.evaluate(() => {
       const getDeepContent = () => {
-        // Probeer de app container te vinden
         const appContainer = document.querySelector('app-root') || document.querySelector('#app') || document.body;
-        
-        // Zoek ook in alle iframes (AI Studio renders vaak in frames)
         const frames = Array.from(document.querySelectorAll('iframe'));
         let frameContent = '';
         for (const frame of frames) {
@@ -48,7 +44,6 @@ async function scrapeAIStudio() {
             }
           } catch (e) {}
         }
-
         return frameContent || document.documentElement.outerHTML;
       };
 
@@ -59,16 +54,13 @@ async function scrapeAIStudio() {
     });
 
     if (!result.html || result.html.length < 500) {
-      throw new Error('Geen bruikbare content gedetecteerd (pagina leeg of geblokkeerd).');
+      throw new Error('Geen bruikbare content gedetecteerd.');
     }
 
     if (!fs.existsSync('www')) fs.mkdirSync('www', { recursive: true });
-    
-    // Injecteer een basis-manifest en viewport fix voor mobiel
     const finalHtml = result.html.replace('<head>', '<head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">');
-    
     fs.writeFileSync(path.join('www', 'index.html'), finalHtml);
-    console.log('✅ [SUCCESS] Content geëxtraheerd: ' + finalHtml.length + ' bytes');
+    console.log('✅ [SUCCESS] Content geëxtraheerd.');
     
   } catch (err) {
     console.error('❌ [ERROR] Scraper gefaald: ' + err.message);
