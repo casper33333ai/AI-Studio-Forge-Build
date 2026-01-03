@@ -1,0 +1,29 @@
+name: ai-to-apk-forge
+on: [push, workflow_dispatch]
+jobs:
+  forge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node & Chrome
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Scraper Dependencies
+        run: npm install puppeteer @capacitor/core @capacitor/cli @capacitor/android
+      - name: 🔍 Scrape AI Content
+        run: node scraper.js
+        env:
+          AI_URL: ${{ secrets.AI_STUDIO_URL || 'https://ai.studio/apps/drive/1tubqLw5bI6VwmqUsZpQEAQ8HQNf6p_TW' }}
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - name: 🏗️ Forge Native APK
+        run: node convert-to-apk.js
+      - name: 📦 Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: android/app/build/outputs/apk/debug/app-debug.apk
