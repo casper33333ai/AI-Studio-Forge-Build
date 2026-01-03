@@ -14,15 +14,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          # Cache verwijderd omdat we geen package-lock.json meesturen
           
       - name: Install Chrome Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget gnupg
           sudo apt-get install -y libgbm1 libasound2 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libpango-1.0-0 libcairo2 libasound2 libxshmfence1 libglu1
           
-      - name: Install Dependencies
+      - name: Install Node Modules
         run: |
           npm install puppeteer @capacitor/core @capacitor/cli @capacitor/android
           npx puppeteer browsers install chrome
@@ -30,7 +29,7 @@ jobs:
       - name: 🔍 Scrape AI Content
         run: node scraper.js
         env:
-          AI_URL: ${{ secrets.AI_STUDIO_URL || 'https://ai.studio/apps/drive/1tubqLw5bI6VwmqUsZpQEAQ8HQNf6p_TW' }}
+          AI_URL: ${{ secrets.AI_URL || 'https://ai.studio/apps/drive/1tubqLw5bI6VwmqUsZpQEAQ8HQNf6p_TW' }}
           
       - name: Setup Java
         uses: actions/setup-java@v4
