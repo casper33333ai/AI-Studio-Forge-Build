@@ -1,0 +1,9 @@
+{
+  "name": "ai-studio-forge-build",
+  "dependencies": {
+    "puppeteer": "^22.0.0",
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}
