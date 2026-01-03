@@ -5,24 +5,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node & Chrome
+      
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Install Scraper Dependencies
+          
+      - name: Install System Dependencies for Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgbm1 libasound2 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libpango-1.0-0 libcairo2 libasound2
+          
+      - name: Install Project Dependencies
         run: npm install puppeteer @capacitor/core @capacitor/cli @capacitor/android
+        
       - name: 🔍 Scrape AI Content
         run: node scraper.js
         env:
           AI_URL: ${{ secrets.AI_STUDIO_URL || 'https://ai.studio/apps/drive/1tubqLw5bI6VwmqUsZpQEAQ8HQNf6p_TW' }}
+          
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
+          
       - name: 🏗️ Forge Native APK
         run: node convert-to-apk.js
-      - name: 📦 Upload Result
+        
+      - name: 📦 Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release
